@@ -10,3 +10,5 @@ all: start
 start: gp-lab1.cu
 	$(COMPILLER) $(FLAGS) -o gp-lab1 gp-lab1.cu
 
+clean:
+	rm gp-lab1

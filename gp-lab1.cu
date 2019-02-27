@@ -45,6 +45,9 @@ __host__ int main(void) {
 
 	cudaMemcpy(res, cudaRes, sizeof(double) * size, cudaMemcpyDeviceToHost);
 
+	//double *testArr = new double[size];
+	//cudaMemcpy(testArr, cudaFirst, sizeof(double) * size, cudaMemcpyDeviceToHost);
+
 	cudaEventDestroy(syncEvent);
 	cudaFree(cudaFirst);
 	cudaFree(cudaSecond);
