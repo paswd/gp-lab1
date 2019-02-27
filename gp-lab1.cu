@@ -3,10 +3,13 @@
 
 using namespace std;
 
-__global__ void VectorsPairMaximums(double *first, double *second, double *res) {
-	size_t current = (size_t) threadIdx.x;
+__global__ void VectorsPairMaximums(size_t size, double *first, double *second, double *res) {
+	size_t begin = (size_t) (blockDim.x * blockIdx.x + threadIdx.x);
+	size_t offset = gridDim.x * blockDim.x;
 
-	res[current] = max(first[current], second[current]);
+	for (size_t i = begin; i < size; i += offset) {
+		res[i] = max(first[i], second[i]);
+	}
 }
 
 __host__ int main(void) {
@@ -19,9 +22,11 @@ __host__ int main(void) {
 
 	for (size_t i = 0; i < size; i++) {
 		cin >> first[i];
+		//first[i] = i;
 	}
 	for (size_t i = 0; i < size; i++) {
 		cin >> second[i];
+		//second[i] = i;
 	}
 
 	double *cudaFirst;
@@ -35,7 +40,7 @@ __host__ int main(void) {
 	cudaMemcpy(cudaFirst, first, sizeof(double) * size, cudaMemcpyHostToDevice);
 	cudaMemcpy(cudaSecond, second, sizeof(double) * size, cudaMemcpyHostToDevice);
 
-	VectorsPairMaximums<<<1, size>>>(cudaFirst, cudaSecond, cudaRes);
+	VectorsPairMaximums<<<256, 256>>>(size, cudaFirst, cudaSecond, cudaRes);
 
 	cudaEvent_t syncEvent;
 
